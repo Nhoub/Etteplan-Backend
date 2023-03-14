@@ -28,9 +28,9 @@ namespace EtteplanMORE.ServiceManual.Web.Controllers
                 .Select(fd => 
                     new FactoryDeviceDto {
                         Id = fd.Id,
-                        Name = fd.Name,
-                        Year = fd.Year,
-                        Type = fd.Type
+                        Name = fd.DeviceName,
+                        Year = fd.DeviceYear,
+                        Type = fd.DeviceType
                     }
                 );
         }
@@ -41,7 +41,7 @@ namespace EtteplanMORE.ServiceManual.Web.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var fd = await _factoryDeviceService.Get(id);
+            var fd = await _factoryDeviceService.GetDevice(id);
             if (fd == null)
             {
                 return NotFound();
@@ -50,9 +50,9 @@ namespace EtteplanMORE.ServiceManual.Web.Controllers
             return Ok(new FactoryDeviceDto
             {
                 Id = fd.Id,
-                Name = fd.Name,
-                Year = fd.Year,
-                Type = fd.Type
+                Name = fd.DeviceName,
+                Year = fd.DeviceYear,
+                Type = fd.DeviceType
             });
         }
     }

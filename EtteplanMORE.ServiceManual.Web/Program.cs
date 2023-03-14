@@ -1,7 +1,11 @@
-﻿using EtteplanMORE.ServiceManual.ApplicationCore.Interfaces;
+﻿using EtteplanMORE.ServiceManual.ApplicationCore;
+using EtteplanMORE.ServiceManual.ApplicationCore.Interfaces;
 using EtteplanMORE.ServiceManual.ApplicationCore.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<ServiceManualDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 
