@@ -22,17 +22,9 @@ namespace EtteplanMORE.ServiceManual.Web.Controllers
         ///     HTTP GET: api/factorydevices/
         /// </summary>
         [HttpGet]
-        public async Task<IEnumerable<FactoryDeviceDto>> Get()
+        public async Task<IEnumerable<FactoryDevice>> Get()
         {
-            return (await _factoryDeviceService.GetAll())
-                .Select(fd => 
-                    new FactoryDeviceDto {
-                        Id = fd.Id,
-                        Name = fd.DeviceName,
-                        Year = fd.DeviceYear,
-                        Type = fd.DeviceType
-                    }
-                );
+            return (await _factoryDeviceService.GetAll());
         }
 
         /// <summary>
