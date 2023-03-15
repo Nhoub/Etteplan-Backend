@@ -36,7 +36,7 @@ namespace EtteplanMORE.ServiceManual.ApplicationCore.Services
 
         public MaintenanceTasks UpdateTask(MaintenanceTasks task)
         {
-            task.RegisteredTimeTask = DateTime.Now;
+            //Update so that the discription, severity and status of a task may be changed
             _serviceManualDbContext.Attach(task);
             _serviceManualDbContext.Add(task);
             return task;

@@ -16,8 +16,8 @@ namespace EtteplanMORE.ServiceManual.Web.Controllers
         }
         //REST api
         // GET V
-        // Post
-        // Update
+        // Post - CreateTask Progress
+        // Put - UpdateTask Progress
         // Delete V
 
         [HttpGet("{id}")]
@@ -36,7 +36,7 @@ namespace EtteplanMORE.ServiceManual.Web.Controllers
         }
 
 
-        [HttpDelete("{id")]
+        [HttpDelete("{id}")]
         public IActionResult DeleteTask(int id)
         {
             var task = _maintenanceTasksService.Get(id);
@@ -51,22 +51,40 @@ namespace EtteplanMORE.ServiceManual.Web.Controllers
             return Ok("Maitenance task has been deleted");
         }
 
-        [HttpPut]
-        public IActionResult Post([FromBody] MaintenanceTask task)
+        [HttpPost]
+        public IActionResult CreateTask([FromBody] MaintenanceTask task)
         {
+            if (task.id == null)
+            {
+                return BadRequest("Enter a valid id");
+            }
+
+            _maintenanceTasksService.AddTask(task);
+
+            return CreatedAtRoute("GetTask", new { id = task.Id }, task);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateTask(int id, [FromBody] MaintenanceTasks task)
+        {
+            var existingTask = _maintenanceTasksService.Get(id);
+            if (existingTask == null)
+            {
+                return NotFound();
+            }
             if (task == null)
             {
                 return BadRequest();
             }
 
-            _maintenanceTasksService.Create(task);
+            //This needs to go to MTServices
+            existingTask.DiscriptionTask = task.DiscriptionTask;
+            existingTask.SeverityTask = task.SeverityTask;
+            existingTask.StatusTask = task.StatusTask;
 
-            return CreatedAtRoute("GetTask", new { id = task.Id }, task);
-        }
+            _maintenanceTasksService.UpdateTask(existingTask);
 
-        [HttpPost]
-        public IActionResult PostTask()
-        {
+            return Ok(existingTask);
 
         }
     }
