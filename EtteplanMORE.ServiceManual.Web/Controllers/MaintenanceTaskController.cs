@@ -52,9 +52,13 @@ namespace EtteplanMORE.ServiceManual.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateTask([FromBody] MaintenanceTask task)
+        public IActionResult CreateTask([FromBody] MaintenanceTasks task)
         {
-            if (task.id == null)
+            if (!ModelState.IsValid)
+            {
+                //Look at Bumbo
+            }
+            if (task.Id == null)
             {
                 return BadRequest("Enter a valid id");
             }
@@ -81,6 +85,7 @@ namespace EtteplanMORE.ServiceManual.Web.Controllers
             existingTask.DiscriptionTask = task.DiscriptionTask;
             existingTask.SeverityTask = task.SeverityTask;
             existingTask.StatusTask = task.StatusTask;
+            //
 
             _maintenanceTasksService.UpdateTask(existingTask);
 
