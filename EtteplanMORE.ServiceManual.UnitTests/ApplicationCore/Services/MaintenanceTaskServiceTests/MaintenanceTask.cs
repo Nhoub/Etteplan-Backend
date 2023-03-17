@@ -1,13 +1,10 @@
-﻿/*using EtteplanMORE.ServiceManual.ApplicationCore.Interfaces;
+﻿using EtteplanMORE.ServiceManual.ApplicationCore.Entities;
+using EtteplanMORE.ServiceManual.ApplicationCore.Interfaces;
 using EtteplanMORE.ServiceManual.Web.Controllers;
+using EtteplanMORE.ServiceManual.Web.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 using Assert = NUnit.Framework.Assert;
 
@@ -25,7 +22,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             public void SetUp()
             {
                 _serviceMock = new Mock<IMaintenanceTasksService>();
-                _controller = new MaintenanceTaskController(_serviceMock.Object);
+                _controller = new MaintenanceTaskController(_maintenanceTasksService);
             }
 
             /// <summary>
@@ -36,7 +33,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                MaintenanceTask task = new MaintenanceTask { Id = id };
+                MaintenanceTask task = new MaintenanceTaskDto { DeviceId = id };
                 _serviceMock.Setup(x => x.Get(id)).Returns(task);
 
                 // Act
@@ -54,7 +51,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                var task = new MaintenanceTask { Id = id };
+                var task = new MaintenanceTaskDto { DeviceId = id };
                 _serviceMock.Setup(x => x.Get(id)).Returns(task);
 
                 // Act
@@ -72,7 +69,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                _serviceMock.Setup(x => x.Get(id)).Returns((MaintenanceTask)null);
+                _serviceMock.Setup(x => x.Get(id)).Returns((MaintenanceTasks)null);
 
                 // Act
                 var result = _controller.GetTask(id);
@@ -89,7 +86,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                _serviceMock.Setup(x => x.Get(id)).Returns((MaintenanceTask)null);
+                _serviceMock.Setup(x => x.Get(id)).Returns((MaintenanceTasks)null);
 
                 // Act
                 var result = (NotFoundObjectResult)_controller.GetTask(id);
@@ -107,7 +104,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                var task = new MaintenanceTask { Id = id };
+                var task = new MaintenanceTaskDto { DeviceId = id };
                 _serviceMock.Setup(x => x.Get(id)).Returns(task);
 
                 // Act
@@ -125,7 +122,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                var task = new MaintenanceTask { Id = id };
+                var task = new MaintenanceTaskDto { DeviceId = id };
                 _serviceMock.Setup(x => x.Get(id)).Returns(task);
 
                 // Act
@@ -143,7 +140,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                var task = new MaintenanceTask { Id = id };
+                var task = new MaintenanceTaskDto { DeviceId = id };
                 _serviceMock.Setup(x => x.Get(id)).Returns(task);
 
                 // Act
@@ -161,7 +158,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                _serviceMock.Setup(x => x.Get(id)).Returns((MaintenanceTask)null);
+                _serviceMock.Setup(x => x.Get(id)).Returns((MaintenanceTasks)null);
 
                 // Act
                 var result = _controller.DeleteTask(id);
@@ -178,7 +175,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                _serviceMock.Setup(x => x.Get(id)).Returns((MaintenanceTask)null);
+                _serviceMock.Setup(x => x.Get(id)).Returns((MaintenanceTasks)null);
 
                 // Act
                 var result = _controller.DeleteTask(id);
@@ -195,7 +192,9 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                var task = new MaintenanceTask { Id = id };
+                var task = new MaintenanceTaskDto { 
+                    DeviceId = id 
+                };
                 _serviceMock.Setup(x => x.Get(id)).Returns(task);
 
                 // Act
@@ -204,7 +203,54 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
                 // Assert
                 Assert.AreEqual("Maitenance task has been deleted", result.Value);
             }
+
+            [Fact]
+            public void CreateTask_WithValidModel_ReturnsCreatedAtActionResult()
+            {
+                // Arrange
+                var task = new MaintenanceTaskDto
+                {
+                    DeviceId = 1,
+                    DescriptionTask = "Test task",
+                    SeverityTask = "Critical",
+                    StatusTask = "Open"
+                };
+
+                _serviceMock.Setup(x => x.AddTask(It.IsAny<MaintenanceTasks>()))
+                    .Returns(new MaintenanceTasks { Id = 1 });
+
+                // Act
+                var result = _controller.CreateTask(task);
+
+                // Assert
+                var createdAtActionResult = result as CreatedAtActionResult;
+                Assert.That(createdAtActionResult, Is.Not.Null);
+                Assert.That(createdAtActionResult.ActionName, Is.EqualTo(nameof(_controller.GetTask)));
+                Assert.That(createdAtActionResult.RouteValues["id"], Is.EqualTo(1));
+            }
+
+            [Fact]
+            public void CreateTask_WithInvalidModel_ReturnsBadRequestObjectResult()
+            {
+                // Arrange
+                var task = new MaintenanceTaskDto
+                {
+                    DeviceId = 1,
+                    DescriptionTask = "Test task",
+                    SeverityTask = "InvalidSeverity",
+                    StatusTask = "New"
+                };
+
+                _controller.ModelState.AddModelError("SeverityTask", "The field SeverityTask is not valid.");
+
+                // Act
+                var result = _controller.CreateTask(task);
+
+                // Assert
+                Assert.That(result, Is.InstanceOf(typeof(BadRequestObjectResult)));
+                var badRequestObjectResult = (BadRequestObjectResult)result;
+                Assert.AreEqual("One or more values are not correct, try again", badRequestObjectResult.Value);
+            }
         }
     }
 }
-*/
