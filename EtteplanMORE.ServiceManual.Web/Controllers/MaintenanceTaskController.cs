@@ -12,12 +12,13 @@ namespace EtteplanMORE.ServiceManual.Web.Controllers
         private readonly IFactoryDeviceService _factoryDeviceService;
         private readonly IMaintenanceTasksService _maintenanceTasksService;
 
+        public IMaintenanceTasksService Object { get; }
+
         public MaintenanceTaskController(IFactoryDeviceService factoryDeviceService, IMaintenanceTasksService maintenanceTasksService)
         {
             _factoryDeviceService = factoryDeviceService;
             _maintenanceTasksService = maintenanceTasksService;
         }
-
 
         /// <summary>
         /// Get the Maintenance task corrospoding with the given Id otherwise give a Not Found warning
