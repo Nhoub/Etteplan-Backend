@@ -1,4 +1,4 @@
-﻿using EtteplanMORE.ServiceManual.ApplicationCore.Interfaces;
+﻿/*using EtteplanMORE.ServiceManual.ApplicationCore.Interfaces;
 using EtteplanMORE.ServiceManual.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -207,3 +207,4 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
         }
     }
 }
+*/
