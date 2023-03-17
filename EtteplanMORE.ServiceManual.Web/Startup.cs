@@ -21,6 +21,9 @@ namespace EtteplanMORE.ServiceManual.Web
             services.AddDbContext<ServiceManualDbContext>(option => option.UseSqlServer("DefaultConnection"));
             services.AddScoped<IFactoryDeviceService, FactoryDeviceService>();
             services.AddScoped<IMaintenanceTasksService, MaintenanceTasksService>();
+
+            services.AddMvc(options => options.EnableEndpointRouting = false);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -31,7 +34,7 @@ namespace EtteplanMORE.ServiceManual.Web
                 app.UseDeveloperExceptionPage();
             }
 
-            //serviceManualDbContext.Database.Migrate();
+            serviceManualDbContext.Database.Migrate();
 
             app.UseHttpsRedirection();
             app.UseMvc();

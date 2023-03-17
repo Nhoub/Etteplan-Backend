@@ -1,9 +1,12 @@
 ﻿using EtteplanMORE.ServiceManual.ApplicationCore.Entities;
 using EtteplanMORE.ServiceManual.ApplicationCore.Interfaces;
+using EtteplanMORE.ServiceManual.Web.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EtteplanMORE.ServiceManual.Web.Controllers
 {
+    [Route("api/[controller]")]
+
     public class MaintenanceTaskController : Controller
     {
         private readonly IFactoryDeviceService _factoryDeviceService;
@@ -14,12 +17,13 @@ namespace EtteplanMORE.ServiceManual.Web.Controllers
             _factoryDeviceService = factoryDeviceService;
             _maintenanceTasksService = maintenanceTasksService;
         }
-        //REST api
-        // GET V
-        // Post - CreateTask Progress
-        // Put - UpdateTask Progress
-        // Delete V
 
+
+        /// <summary>
+        /// Get the Maintenance task corrospoding with the given Id otherwise give a Not Found warning
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public IActionResult GetTask(int id)
         {
@@ -27,15 +31,19 @@ namespace EtteplanMORE.ServiceManual.Web.Controllers
 
             if (task == null)
             {
-                return NotFound("No maitenance found against this id.");
+                return NotFound("No maitenance task found against this id.");
             }
             else
             {
-                return Ok(task);
+                return Ok(Task(task));
             }
         }
 
-
+        /// <summary>
+        /// Delete the maitenance task corrosponding with the given Id otherwise give a Not Found warning
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public IActionResult DeleteTask(int id)
         {
@@ -47,50 +55,90 @@ namespace EtteplanMORE.ServiceManual.Web.Controllers
             else
             {
                 _maintenanceTasksService.DeleteTask(id);
+                return Ok("Maitenance task has been deleted");
             }
-            return Ok("Maitenance task has been deleted");
         }
 
+        /// <summary>
+        /// Create a new Maitenance task
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns></returns>
         [HttpPost]
-        public IActionResult CreateTask([FromBody] MaintenanceTasks task)
+        public IActionResult CreateTask([FromBody] MaintenanceTaskDto task)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                //Look at Bumbo
+                var createTask = new MaintenanceTasks()
+                {
+                    DeviceId = task.DeviceId,
+                    DiscriptionTask = task.DescriptionTask,
+                    SeverityTask = (SeverityTask)Enum.Parse(typeof(SeverityTask), task.SeverityTask, true),
+                    StatusTask = (StatusTask)Enum.Parse(typeof(StatusTask), task.StatusTask, true)
+                };
+
+                var newTask = _maintenanceTasksService.AddTask(createTask);
+
+                return CreatedAtAction(nameof(GetTask), new { id = newTask.Id }, Task(newTask));
             }
-            if (task.Id == null)
+            else
             {
-                return BadRequest("Enter a valid id");
+                return BadRequest("One or more values are not correct, try again");
             }
-
-            _maintenanceTasksService.AddTask(task);
-
-            return CreatedAtRoute("GetTask", new { id = task.Id }, task);
         }
 
+
+        /// <summary>
+        /// Update an existing Maitenance task
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="task"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public IActionResult UpdateTask(int id, [FromBody] MaintenanceTasks task)
+        public IActionResult UpdateTask(int id, [FromBody] MaintenanceTaskDto task)
         {
-            var existingTask = _maintenanceTasksService.Get(id);
-            if (existingTask == null)
+            if (id != task.TaskId)
             {
-                return NotFound();
+                return BadRequest("Not the correct taskId");
             }
-            if (task == null)
+            if (ModelState.IsValid)
             {
-                return BadRequest();
+                var taskId = _maintenanceTasksService.Get(id);
+                var createTask = new MaintenanceTasks()
+                {
+                    Id = task.TaskId,
+                    DeviceId = task.DeviceId,
+                    DiscriptionTask = task.DescriptionTask,
+                    SeverityTask = (SeverityTask)Enum.Parse(typeof(SeverityTask), task.SeverityTask, true),
+                    StatusTask = (StatusTask)Enum.Parse(typeof(StatusTask), task.StatusTask, true)
+                };
+
+                var updatedTask = _maintenanceTasksService.UpdateTask(createTask);
+
+                return Ok(Task(updatedTask));
             }
+            else
+            {
+                return BadRequest("One or more values are not correct, try again");
+            }
+        }
 
-            //This needs to go to MTServices
-            existingTask.DiscriptionTask = task.DiscriptionTask;
-            existingTask.SeverityTask = task.SeverityTask;
-            existingTask.StatusTask = task.StatusTask;
-            //
-
-            _maintenanceTasksService.UpdateTask(existingTask);
-
-            return Ok(existingTask);
-
+        /// <summary>
+        /// Add the given Maitenance task values to the collumn in the database
+        /// </summary>
+        /// <param name="maintenanceTask"></param>
+        /// <returns></returns>
+        private MaintenanceTaskDto Task(MaintenanceTasks maintenanceTask)
+        {
+            return new MaintenanceTaskDto()
+            {
+                TaskId = maintenanceTask.Id,
+                DescriptionTask = maintenanceTask.DiscriptionTask,
+                DeviceId = maintenanceTask.DeviceId,
+                RegisteredTimeTask = Convert.ToString(maintenanceTask.RegisteredTimeTask),
+                SeverityTask = maintenanceTask.SeverityTask.ToString(),
+                StatusTask = maintenanceTask.StatusTask.ToString()
+            };
         }
     }
 }

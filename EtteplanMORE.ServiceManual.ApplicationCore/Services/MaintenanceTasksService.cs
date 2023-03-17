@@ -16,7 +16,7 @@ namespace EtteplanMORE.ServiceManual.ApplicationCore.Services
 
 
         /// <summary>
-        /// Get the list of MaitenanceTasks, ordered first by severity and then by registered time
+        /// Get the MaitenanceTasks correspinding with the given id, ordered first by severity and then by registered time
         /// </summary>
         /// <returns></returns>
         public MaintenanceTasks Get(int id)
@@ -34,16 +34,34 @@ namespace EtteplanMORE.ServiceManual.ApplicationCore.Services
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Update the task given of the given task id is not null. The registered time does not need to be updateted 
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns></returns>
         public MaintenanceTasks UpdateTask(MaintenanceTasks task)
         {
-            //Update so that the discription, severity and status of a task may be changed
-            _serviceManualDbContext.Attach(task);
-            _serviceManualDbContext.Add(task);
-            return task;
+            var result = _serviceManualDbContext.MaintenanceTasks.FirstOrDefault(i => i.Id == task.Id);
+
+            if(result != null)
+            {
+                result.Id = task.Id;
+                result.DiscriptionTask = task.DiscriptionTask;
+                result.SeverityTask = task.SeverityTask;
+                result.StatusTask = task.StatusTask;
+
+                _serviceManualDbContext.SaveChanges();
+                return task;
+            }
+
+           return null;
         }
 
-       
-
+        /// <summary>
+        /// Delete the maitenance task corrosponding with the given id
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <returns></returns>
         public MaintenanceTasks DeleteTask(int taskId)
         {
             var result = _serviceManualDbContext.MaintenanceTasks.FirstOrDefault(task => task.Id == taskId);
@@ -56,9 +74,18 @@ namespace EtteplanMORE.ServiceManual.ApplicationCore.Services
             return null;
         }
 
+        /// <summary>
+        /// Add a new task
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns></returns>
         public MaintenanceTasks AddTask(MaintenanceTasks task)
         {
-            throw new NotImplementedException();
+            task.RegisteredTimeTask = DateTime.Now;
+            _serviceManualDbContext.Add(task);
+            _serviceManualDbContext.SaveChanges();
+            return task;
+
         }
     }
 }

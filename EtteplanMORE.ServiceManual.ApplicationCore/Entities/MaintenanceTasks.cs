@@ -7,16 +7,16 @@ namespace EtteplanMORE.ServiceManual.ApplicationCore.Entities
     {
         [Key]
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Fill in a correct date time!")]
         public DateTime RegisteredTimeTask { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Fill in a discription, characters only!")]
         public string DiscriptionTask { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Value can only bee Critical, Important or Unimportant")]
         public SeverityTask SeverityTask { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Value can only be Open or Closed!")]
         public StatusTask StatusTask { get; set; }
-        /*[Required]
-        public int DeviceId { get; set; }*/
+        [Required(ErrorMessage = "DevideId not found")]
+        public int DeviceId { get; set; }
     }
 }
     public enum SeverityTask
