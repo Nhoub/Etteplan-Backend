@@ -34,7 +34,6 @@ namespace EtteplanMORE.ServiceManual.Web
                 app.UseDeveloperExceptionPage();
             }
 
-            serviceManualDbContext.Database.Migrate();
 
             app.UseHttpsRedirection();
             app.UseMvc();
