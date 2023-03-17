@@ -26,7 +26,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.FactoryD
             IFactoryDeviceService FactoryDeviceService = new FactoryDeviceService();
             int fdId = 1;
 
-            var fd = await FactoryDeviceService.GetDevice(fdId);
+            var fd = await FactoryDeviceService.Get(fdId);
 
             Assert.NotNull(fd);
             Assert.Equal(fdId, fd.Id);
@@ -38,7 +38,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.FactoryD
             IFactoryDeviceService FactoryDeviceService = new FactoryDeviceService();
             int fdId = 4;
 
-            var fd = await FactoryDeviceService.GetDevice(fdId);
+            var fd = await FactoryDeviceService.Get(fdId);
 
             Assert.Null(fd);
         }
