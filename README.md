@@ -16,7 +16,7 @@ time shall never be updated.
 There are Unit Tests present that show that the API works
 
 Git:
-
+https://github.com/Nhoub/Etteplan-Backend.git
 
 How to run this API
 	1. Clone the attached project file
