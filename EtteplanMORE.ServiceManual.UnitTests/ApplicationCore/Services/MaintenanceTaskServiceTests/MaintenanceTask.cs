@@ -17,12 +17,14 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
         {
             private MaintenanceTaskController _controller;
             private Mock<IMaintenanceTasksService> _serviceMock;
+            private Mock<IFactoryDeviceService> _factoryDeviceServiceMock;
 
             [SetUp]
             public void SetUp()
             {
                 _serviceMock = new Mock<IMaintenanceTasksService>();
-                _controller = new MaintenanceTaskController(_maintenanceTasksService);
+                _factoryDeviceServiceMock = new Mock<IFactoryDeviceService>();
+                _controller = new MaintenanceTaskController(_factoryDeviceServiceMock.Object, _serviceMock.Object);
             }
 
             /// <summary>
@@ -33,7 +35,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                MaintenanceTask task = new MaintenanceTaskDto { DeviceId = id };
+                MaintenanceTasks task = new MaintenanceTasks { DeviceId = id };
                 _serviceMock.Setup(x => x.Get(id)).Returns(task);
 
                 // Act
@@ -51,7 +53,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                var task = new MaintenanceTaskDto { DeviceId = id };
+                var task = new MaintenanceTasks { DeviceId = id };
                 _serviceMock.Setup(x => x.Get(id)).Returns(task);
 
                 // Act
@@ -104,7 +106,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                var task = new MaintenanceTaskDto { DeviceId = id };
+                var task = new MaintenanceTasks { DeviceId = id };
                 _serviceMock.Setup(x => x.Get(id)).Returns(task);
 
                 // Act
@@ -122,7 +124,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                var task = new MaintenanceTaskDto { DeviceId = id };
+                var task = new MaintenanceTasks { DeviceId = id };
                 _serviceMock.Setup(x => x.Get(id)).Returns(task);
 
                 // Act
@@ -140,7 +142,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                var task = new MaintenanceTaskDto { DeviceId = id };
+                var task = new MaintenanceTasks { DeviceId = id };
                 _serviceMock.Setup(x => x.Get(id)).Returns(task);
 
                 // Act
@@ -192,7 +194,7 @@ namespace EtteplanMORE.ServiceManual.UnitTests.ApplicationCore.Services.Maintena
             {
                 // Arrange
                 int id = 1;
-                var task = new MaintenanceTaskDto { 
+                var task = new MaintenanceTasks { 
                     DeviceId = id 
                 };
                 _serviceMock.Setup(x => x.Get(id)).Returns(task);
