@@ -13,6 +13,8 @@ in the parameter of this method.
 Using the http PUT request. This shall update the maitenance task with new information given. Only the registered
 time shall never be updated.
 
+There are Unit Tests present that show that the API works
+
 Git:
 
 
